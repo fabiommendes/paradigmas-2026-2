@@ -1,0 +1,13 @@
+# Python-generated files
+__pycache__/
+.mypy_cache/
+.venv/
+.github/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+**/private/
+elm-stuff/
+node-modules/
