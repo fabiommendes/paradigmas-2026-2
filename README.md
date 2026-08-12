@@ -14,19 +14,12 @@ plano de ensino do semestre.
 
 ## Informações básicas
 
-Curso: 
-    Engenharia de Software
-Professor: 
-    Fábio Macêdo Mendes
-Disciplina: 
-    Paradigmas de Programação
-Semestre/ano: 
-    01/2025
-Carga horária: 
-    60 h
-Créditos: 
-    04
-
+* **Curso:** Engenharia de Software
+* **Professor:** Fábio Macêdo Mendes
+* **Disciplina:** Paradigmas de Programação
+* **Semestre/ano:** 01/2025
+* **Carga horária:** 60 h
+* **Créditos:** 04
 
 ## Ementa
 
@@ -123,4 +116,5 @@ ferramentas de JavaScript também serão utilizadas.
 Consultar [cronograma](CRONOGRAMA.rst).
 
 Obs.: O cronograma está sujeito a alterações.
+
 
