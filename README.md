@@ -120,7 +120,7 @@ ferramentas de JavaScript também serão utilizadas.
 
 ## Cronograma de atividades
     
-Consultar `cronograma <CRONOGRAMA.rst>`_.
+Consultar [cronograma](CRONOGRAMA.rst).
 
 Obs.: O cronograma está sujeito a alterações.
 
