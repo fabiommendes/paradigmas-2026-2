@@ -1,21 +1,18 @@
-=======
-Avisos!
-=======
 
-* Nenhum aviso!
+# Paradigmas de Programação
 
-
-=========================
-Paradigmas de Programação
-=========================
 
 Este é o Git da disciplina Paradigmas de Programação. Aqui ficará o material produzido em sala de aula 
 assim como tarefas, wiki e discussões. Este arquivo contêm informações básicas sobre a disciplina e o 
 plano de ensino do semestre.
 
 
-Informações básicas
-===================
+## Avisos!
+
+* Nenhum aviso!
+
+
+## Informações básicas
 
 Curso: 
     Engenharia de Software
@@ -31,8 +28,7 @@ Créditos:
     04
 
 
-Ementa
-======
+## Ementa
 
 * Programação Lógica com Prolog.
   * Problemas com restrições.
@@ -48,15 +44,13 @@ Ementa
 * Criação de sistemas nos paradigmas de programação Lógica e Funcional.
 
 
-Horário das aulas e atendimento
-===============================
+## Horário das aulas e atendimento
 
 Aulas teóricas e de exercícios: quartas e sextas-feiras às 14h ou 16h.
 Atendimento: realizado nas quartas feiras no horário de almoço.
 
 
-Informações importantes
-========================
+## Informações importantes
 
 Este curso utiliza GitHub para gerenciar o curso. A comunicação com a 
 turma é feita através de atualizações no Github ou fóruns no SIGAA.
@@ -66,12 +60,11 @@ sobre atualizações.
 Cada aluno também deve preencher o formulário com nome, e-mail e usuário no Github.
 
 * Github:
-    https://github.com/fabiommendes/fcte-paradigmas-2026-2/
+    https://github.com/fabiommendes/paradigmas-2026-2/
 * Github Classroom:
     Link é gerado em cada atividade. Usado para a entrega do trabalho final e para submissão de exercícios.
 
-Critérios de avaliação
-======================
+## Critérios de avaliação
 
 A avaliação será feita com base nas atividades:
 
@@ -85,8 +78,8 @@ justificativa de falta em qualquer uma das duas provas. Alunos com atestados
 médicos longos também podem fazer a prova substitutiva para substituir a nota de
 exercícios em sala que não puderam ser realizados.
 
-Código de ética e conduta
--------------------------
+
+### Código de ética e conduta
 
 Algumas avaliações serão realizadas com auxílio do computador. Todas as
 submissões serão processadas por um programa de detecção de plágio. Qualquer
@@ -95,8 +88,7 @@ possibilidade de substituição. Não será feita qualquer distinção entre o a
 que forneceu a resposta para cópia e o aluno que obteve a mesma.
 
 
-Prepare-se
-==========
+## Prepare-se
 
 O curso utiliza alguns pacotes e ferramentas para os quais cada estudante deverá
 providenciar a instalação o mais cedo o possível. Utilizaremos o ELM 0.19.2 e
@@ -115,22 +107,19 @@ ferramentas de JavaScript também serão utilizadas.
   Precisamos de uma versão relativamente recente (>= 9.1.12) para suportar a
   integração com o Python.
 
-Bibliografia principal
-----------------------
+## Bibliografia principal
 
 * **Programming in Prolog**, Clocksin, Mellish, 2003. Disponível no repositório do curso.
 * **Elm Guide**: https://guide.elm-lang.org/
 
-Material suplementar
---------------------
+### Material suplementar
 
 * **https://www.metalevel.at/**, Blog/vídeos com bons recursos pedagógicos sobre Prolog.
 * **Learn you a Haskell**: https://learnyouahaskell.github.io/. Livro sobre Haskell. Útil para entender conceitos de programação funcional. Elm descende de Haskell e possui sintaxe e conceitos similares.
 
 
-Cronograma de atividades
-========================
-
+## Cronograma de atividades
+    
 Consultar `cronograma <CRONOGRAMA.rst>`_.
 
 Obs.: O cronograma está sujeito a alterações.
