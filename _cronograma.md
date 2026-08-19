@@ -37,18 +37,19 @@ Termos e operadores de Prolog
 * Consultas e unificação.
 * Aridade de termos.
 ----------------------------------------------------------
+Listas
+
+* Criando listas.
+* Cabeça e cauda de listas.
+* Recursão e manipulação de listas.
+----------------------------------------------------------
 Números e CLPFD
 
 * Operações aritméticas.
 * Operadores primitivos vs CLPFD.
 * Programação com restrições.
 * Fatorial: funções, vs busca e generalidade.
-----------------------------------------------------------
-Listas
-
-* Criando listas.
-* Cabeça e cauda de listas.
-* Recursão e manipulação de listas.
+* Problemas de criptoaritmética.
 ----------------------------------------------------------
 Problemas combinatórios
 
@@ -82,16 +83,14 @@ Lógica clausal
 * Lógica clausal e notação do Prolog.
 * Relação entre lógica clausal e lógica de predicados.
 ----------------------------------------------------------
-Meta-interpretadores
+Meta-interpretadores I
 
 * Definindo meta-interpretadores.
-* Exemplo: cálculo lambda.
+* Exemplo: calculadora de expressões matemáticas.
 ----------------------------------------------------------
-Lógica clausal
+Meta-interpretadores II
 
-* Proposições, cláusulas e relações.
-* Lógica clausal e notação do Prolog.
-* Relação entre lógica clausal e lógica de predicados.
+* Exemplo: cálculo lambda.
 ----------------------------------------------------------
 **Avaliação**
 
@@ -189,7 +188,7 @@ Elm em produção
 * Tratamento de erros.
 * Encoders, decoders e ports.
 ----------------------------------------------------------
-**Apresentação de trabalhos** 
+**Apresentação de trabalhos**
 ----------------------------------------------------------
 **Apresentação de trabalhos**
 ----------------------------------------------------------
