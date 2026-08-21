@@ -1,7 +1,7 @@
 % Apresentamos os personagens
 homem(jamie).
 homem(tyrion).
-homen(twyn).
+homem(twyn).
 homem(joffrey).
 mulher(cersei).
 mulher(myrcella).

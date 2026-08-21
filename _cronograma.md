@@ -21,7 +21,7 @@ Início das aulas – Apresentação do curso
 * Métodos de avaliação.
 * Materiais suplementares.
 ----------------------------------------------------------
-Prolog
+Introdução ao Prolog
 
 * Sintaxe do Prolog.
 * Variáveis, átomos e números.
@@ -37,7 +37,7 @@ Termos e operadores de Prolog
 * Consultas e unificação.
 * Aridade de termos.
 ----------------------------------------------------------
-Listas
+Listas em Prolog
 
 * Criando listas.
 * Cabeça e cauda de listas.
@@ -122,7 +122,7 @@ Tipos algébricos
 * Tipos recursivos.
 * Exemplo: árvores binárias
 ----------------------------------------------------------
-Tratamento de erros
+Tratamento de erros em Elm
 
 * Tipo Maybe e Result.
 * Comando match/case.
@@ -143,7 +143,7 @@ Funções
 * Trocando laços por recursão.
 * Recursão de cauda e otimização.
 ----------------------------------------------------------
-Encoders e decoders
+Encoders e decoders de JSON
 
 * Serializando e deserializando dados.
 * Requisições HTTP e APIs REST.
@@ -188,11 +188,11 @@ Elm em produção
 * Tratamento de erros.
 * Encoders, decoders e ports.
 ----------------------------------------------------------
-**Apresentação de trabalhos**
+**Apresentação de trabalhos I**
 ----------------------------------------------------------
-**Apresentação de trabalhos**
+**Apresentação de trabalhos II**
 ----------------------------------------------------------
-**Apresentação de trabalhos**
+**Apresentação de trabalhos II**
 ----------------------------------------------------------
 **Prova substitutiva**
 ----------------------------------------------------------
