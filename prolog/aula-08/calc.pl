@@ -6,7 +6,6 @@
 :- op(950, xfx, else).
 :- op(950, fx, if).
 
-
 % Manipulação da base de dados env
 set_env(K, V) :-
     retractall(env(K, _)),
