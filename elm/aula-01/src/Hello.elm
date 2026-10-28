@@ -1,32 +1,48 @@
 module Hello exposing (..)
 
+import Html exposing (Html, div, text)
 import Browser
-import Html exposing (Html, div, text, button)
+import Html exposing (button)
 import Html.Events exposing (onClick)
+import Html.Attributes exposing (style)
+
 
 type alias Model =
-    String
+    { name : String }
 
-type alias Msg =
-    String
+type Msg
+    = AddName String
+    | Reset
 
-main : Program () Model Msg
-main =
-    Browser.sandbox
-        { init = "galera"
-        , update = \msg model -> msg
-        , view = view }
+main : Program ()  Model Msg
+main = Browser.sandbox
+    { init = init
+    , update = update
+    , view = view
+    }
 
+init : Model
+init = { name = "Joao" }
 
-view : String -> Html Msg
-view name =
+view : Model -> Html Msg
+view model =
     div []
-        [ div [] [ text ("Hello, " ++ name ++ "!") ]
-        , div
-            []
-            [ button [ onClick "Joao" ] [ text "Joao" ]
-            , button [ onClick "Maria" ] [ text "Maria" ]
-            , button [ onClick "Jose" ] [ text "Jose" ]
-            , button [ onClick "Ana" ] [ text "Ana" ]
-            ]
+        [ div [] [ text ("Hello, " ++ model.name ++ "!") ]
+        , div []
+              [ button [ onClick (AddName "Maria") ] [ text "Maria" ]
+              , button [ onClick (AddName "Jose") ] [ text "Jose" ]
+              , button [ onClick Reset, style "background-color" "red" ] [ text "Reset" ]
+
+              ]
         ]
+
+update : Msg -> Model -> Model
+update msg model =
+    case msg of
+        AddName name ->
+            if model.name |> String.contains name then
+                model
+            else
+                { model | name = model.name ++ " e " ++ name}
+        Reset ->
+            init
