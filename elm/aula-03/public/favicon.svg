@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="10" fill="#0078BF"/>
+  <circle cx="35" cy="30" r="17" fill="#FFE800" style="mix-blend-mode:multiply"/>
+  <text x="32" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="800" fill="#1D1D1B">λ</text>
+</svg>

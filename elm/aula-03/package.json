@@ -1,0 +1,26 @@
+{
+  "name": "memoria-dos-casais",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Jogo da memória educacional em Elm: pares por similaridade.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "api": "uv run --directory server fastapi dev main.py --port 8000",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "elm-test",
+    "format": "elm-format src tests --yes",
+    "format:check": "elm-format src tests --validate",
+    "check": "pnpm format:check && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "@fontsource/alegreya": "^5.3.0",
+    "@fontsource/alegreya-sans": "^5.3.0",
+    "elm": "^0.19.3-0",
+    "elm-format": "^0.8.8",
+    "elm-test": "^0.19.3-0",
+    "vite": "^8.3.5",
+    "vite-plugin-elm": "^3.0.1"
+  }
+}

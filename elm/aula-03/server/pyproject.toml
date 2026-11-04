@@ -1,0 +1,6 @@
+[project]
+name = "memoria-api"
+version = "0.1.0"
+description = "API REST do jogo da memória (aula 03)."
+requires-python = ">=3.11"
+dependencies = ["fastapi[standard]"]

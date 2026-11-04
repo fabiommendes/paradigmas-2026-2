@@ -1,0 +1,5 @@
+node_modules/
+elm-stuff/
+dist/
+.venv/
+__pycache__/

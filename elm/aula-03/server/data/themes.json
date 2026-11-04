@@ -1,0 +1,326 @@
+[
+  {
+    "id": "animals",
+    "name": "Animais",
+    "description": "Pranchas de história natural geradas por IA.",
+    "cover": "/cards/animals/a1.webp",
+    "cards": [
+      {
+        "group": "a",
+        "index": 1,
+        "description": "pavão (macho)",
+        "url": "/cards/animals/a1.webp"
+      },
+      {
+        "group": "a",
+        "index": 2,
+        "description": "pavão (fêmea)",
+        "url": "/cards/animals/a2.webp"
+      },
+      {
+        "group": "b",
+        "index": 1,
+        "description": "leão (macho)",
+        "url": "/cards/animals/b1.webp"
+      },
+      {
+        "group": "b",
+        "index": 2,
+        "description": "leão (fêmea)",
+        "url": "/cards/animals/b2.webp"
+      },
+      {
+        "group": "c",
+        "index": 1,
+        "description": "cervo-vermelho (macho)",
+        "url": "/cards/animals/c1.webp"
+      },
+      {
+        "group": "c",
+        "index": 2,
+        "description": "cervo-vermelho (fêmea)",
+        "url": "/cards/animals/c2.webp"
+      },
+      {
+        "group": "d",
+        "index": 1,
+        "description": "lobo-cinzento (macho)",
+        "url": "/cards/animals/d1.webp"
+      },
+      {
+        "group": "d",
+        "index": 2,
+        "description": "lobo-cinzento (fêmea)",
+        "url": "/cards/animals/d2.webp"
+      },
+      {
+        "group": "e",
+        "index": 1,
+        "description": "gorila-ocidental (macho)",
+        "url": "/cards/animals/e1.webp"
+      },
+      {
+        "group": "e",
+        "index": 2,
+        "description": "gorila-ocidental (fêmea)",
+        "url": "/cards/animals/e2.webp"
+      },
+      {
+        "group": "f",
+        "index": 1,
+        "description": "papagaio-eclectus (macho)",
+        "url": "/cards/animals/f1.webp"
+      },
+      {
+        "group": "f",
+        "index": 2,
+        "description": "papagaio-eclectus (fêmea)",
+        "url": "/cards/animals/f2.webp"
+      },
+      {
+        "group": "g",
+        "index": 1,
+        "description": "muflão (macho)",
+        "url": "/cards/animals/g1.webp"
+      },
+      {
+        "group": "g",
+        "index": 2,
+        "description": "muflão (fêmea)",
+        "url": "/cards/animals/g2.webp"
+      },
+      {
+        "group": "h",
+        "index": 1,
+        "description": "galo",
+        "url": "/cards/animals/h1.webp"
+      },
+      {
+        "group": "h",
+        "index": 2,
+        "description": "galinha",
+        "url": "/cards/animals/h2.webp"
+      }
+    ]
+  },
+  {
+    "id": "pokemon",
+    "name": "Pokémon",
+    "description": "Um Pokémon e sua evolução. Imagens servidas pelo PokéAPI.",
+    "cover": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
+    "cards": [
+      {
+        "group": "a",
+        "index": 1,
+        "description": "Bulbasaur",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png"
+      },
+      {
+        "group": "a",
+        "index": 2,
+        "description": "Ivysaur",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png"
+      },
+      {
+        "group": "b",
+        "index": 1,
+        "description": "Charmander",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/4.png"
+      },
+      {
+        "group": "b",
+        "index": 2,
+        "description": "Charmeleon",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/5.png"
+      },
+      {
+        "group": "c",
+        "index": 1,
+        "description": "Squirtle",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/7.png"
+      },
+      {
+        "group": "c",
+        "index": 2,
+        "description": "Wartortle",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/8.png"
+      },
+      {
+        "group": "d",
+        "index": 1,
+        "description": "Pikachu",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png"
+      },
+      {
+        "group": "d",
+        "index": 2,
+        "description": "Raichu",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/26.png"
+      },
+      {
+        "group": "e",
+        "index": 1,
+        "description": "Abra",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/63.png"
+      },
+      {
+        "group": "e",
+        "index": 2,
+        "description": "Kadabra",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/64.png"
+      },
+      {
+        "group": "f",
+        "index": 1,
+        "description": "Gastly",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/92.png"
+      },
+      {
+        "group": "f",
+        "index": 2,
+        "description": "Haunter",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/93.png"
+      },
+      {
+        "group": "g",
+        "index": 1,
+        "description": "Eevee",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/133.png"
+      },
+      {
+        "group": "g",
+        "index": 2,
+        "description": "Vaporeon",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/134.png"
+      },
+      {
+        "group": "h",
+        "index": 1,
+        "description": "Dratini",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/147.png"
+      },
+      {
+        "group": "h",
+        "index": 2,
+        "description": "Dragonair",
+        "url": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/148.png"
+      }
+    ]
+  },
+  {
+    "id": "simpsons",
+    "name": "Os Simpsons",
+    "description": "Duas imagens diferentes de cada personagem. 8 dos 9 são sorteados.",
+    "cover": "https://cdn.thesimpsonsapi.com/500/character/3.webp",
+    "cards": [
+      {
+        "group": "a",
+        "index": 1,
+        "description": "Bart",
+        "url": "https://cdn.thesimpsonsapi.com/500/character/3.webp"
+      },
+      {
+        "group": "a",
+        "index": 2,
+        "description": "Bart",
+        "url": "https://upload.wikimedia.org/wikipedia/en/a/aa/Bart_Simpson_200px.png"
+      },
+      {
+        "group": "b",
+        "index": 1,
+        "description": "Lisa",
+        "url": "https://cdn.thesimpsonsapi.com/500/character/4.webp"
+      },
+      {
+        "group": "b",
+        "index": 2,
+        "description": "Lisa",
+        "url": "https://upload.wikimedia.org/wikipedia/en/e/ec/Lisa_Simpson.png"
+      },
+      {
+        "group": "c",
+        "index": 1,
+        "description": "Homer",
+        "url": "https://cdn.thesimpsonsapi.com/500/character/1.webp"
+      },
+      {
+        "group": "c",
+        "index": 2,
+        "description": "Homer",
+        "url": "https://upload.wikimedia.org/wikipedia/en/0/02/Homer_Simpson_2006.png"
+      },
+      {
+        "group": "d",
+        "index": 1,
+        "description": "Maggie",
+        "url": "https://cdn.thesimpsonsapi.com/500/character/5.webp"
+      },
+      {
+        "group": "d",
+        "index": 2,
+        "description": "Maggie",
+        "url": "https://upload.wikimedia.org/wikipedia/en/9/9d/Maggie_Simpson.png"
+      },
+      {
+        "group": "e",
+        "index": 1,
+        "description": "Marge",
+        "url": "https://cdn.thesimpsonsapi.com/500/character/2.webp"
+      },
+      {
+        "group": "e",
+        "index": 2,
+        "description": "Marge",
+        "url": "https://upload.wikimedia.org/wikipedia/en/0/0b/Marge_Simpson.png"
+      },
+      {
+        "group": "f",
+        "index": 1,
+        "description": "Mr. Burns",
+        "url": "https://cdn.thesimpsonsapi.com/500/character/13.webp"
+      },
+      {
+        "group": "f",
+        "index": 2,
+        "description": "Mr. Burns",
+        "url": "https://upload.wikimedia.org/wikipedia/en/a/a6/Burns_Baby_Burns.jpg"
+      },
+      {
+        "group": "g",
+        "index": 1,
+        "description": "Milhouse",
+        "url": "https://cdn.thesimpsonsapi.com/500/character/22.webp"
+      },
+      {
+        "group": "g",
+        "index": 2,
+        "description": "Milhouse",
+        "url": "https://upload.wikimedia.org/wikipedia/en/1/11/Milhouse_Van_Houten.png"
+      },
+      {
+        "group": "h",
+        "index": 1,
+        "description": "Moe",
+        "url": "https://cdn.thesimpsonsapi.com/500/character/16.webp"
+      },
+      {
+        "group": "h",
+        "index": 2,
+        "description": "Moe",
+        "url": "https://upload.wikimedia.org/wikipedia/en/5/5e/Dumbbell_Indemnity.png"
+      },
+      {
+        "group": "i",
+        "index": 1,
+        "description": "Ned Flanders",
+        "url": "https://upload.wikimedia.org/wikipedia/en/8/84/Ned_Flanders.png"
+      },
+      {
+        "group": "i",
+        "index": 2,
+        "description": "Ned Flanders",
+        "url": "https://cdn.thesimpsonsapi.com/500/character/1163.webp"
+      }
+    ]
+  }
+]

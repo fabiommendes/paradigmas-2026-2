@@ -1,0 +1,547 @@
+/*
+ * Estilos do jogo. Este arquivo é fornecido pronto: o código Elm só
+ * escolhe as classes, e todo o visual mora aqui. As classes seguem o
+ * padrão BEM: bloco__elemento--modificador.
+ *
+ * Estética de mesa de jogo: um jogo de tabuleiro físico sobre feltro verde: cartas de papel-cartão
+ * grosso com cantos arredondados e sombra de verdade, verso estampado como
+ * um baralho clássico e um bloco de placar de papel ao lado.
+ *
+ * Tipografia: Alegreya (números e títulos, serifa caligráfica e quente) com
+ * Alegreya Sans (rótulos e botões), da mesma família, feitas para combinar.
+ */
+
+@import "@fontsource/alegreya/700.css";
+@import "@fontsource/alegreya/800-italic.css";
+@import "@fontsource/alegreya-sans/500.css";
+@import "@fontsource/alegreya-sans/700.css";
+
+/* ---------- Tokens ---------- */
+
+:root {
+  --felt: #2c5446;
+  --felt-dark: #1f3e33;
+  --card: #f6efdf;
+  --card-edge: #d9ccae;
+  --ink: #2b2420;
+  --ink-soft: #75685a;
+  --wine: #7d2d2a;
+  --wine-dark: #5e1f1d;
+  --gold: #c8962e;
+  --leaf: #3d7a52;
+  --red: #b8392c;
+
+  --radius: 10px;
+  --gap: clamp(10px, 1.8vmin, 16px);
+  --flip: 520ms;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Sombra de carta sobre o feltro: espessura do papel e sombra macia. */
+  --lift: 0 1px 0 var(--card-edge), 0 2px 0 #c2b493, 0 6px 10px -2px rgba(0, 0, 0, 0.35);
+  --lift-high: 0 1px 0 var(--card-edge), 0 2px 0 #c2b493, 0 14px 22px -6px rgba(0, 0, 0, 0.45);
+
+  --serif: "Alegreya", Georgia, serif;
+  --sans: "Alegreya Sans", "Gill Sans", "Trebuchet MS", sans-serif;
+
+  /* Fibra do feltro: ruído gerado por um filtro SVG. */
+  --fiber: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  color-scheme: dark;
+}
+
+/* ---------- Base ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+/* Feltro com fibra e as bordas um pouco mais escuras, como sob uma luminária. */
+body {
+  overflow-x: clip;
+  font-family: var(--sans);
+  color: var(--ink);
+  background:
+    var(--fiber),
+    radial-gradient(ellipse at 50% 40%, transparent 40%, rgba(0, 0, 0, 0.28) 100%),
+    var(--felt);
+  background-attachment: fixed;
+}
+
+button {
+  font: inherit;
+}
+
+/* ---------- Layout ---------- */
+
+/* O tabuleiro é quadrado e ocupa o maior espaço que couber ao lado do
+   botão de novo jogo. Em telas em pé, o botão vai para cima do tabuleiro. */
+:root {
+  --pad: clamp(12px, 3vmin, 28px);
+  --fab-size: 56px;
+  --board-size: min(
+    calc(100dvh - 2 * var(--pad)),
+    calc(100vw - 3 * var(--pad) - var(--fab-size)),
+    820px
+  );
+}
+
+.table {
+  display: grid;
+  grid-template-columns: var(--board-size) var(--fab-size);
+  justify-content: center;
+  align-content: center;
+  gap: var(--pad);
+  min-height: 100dvh;
+  padding: var(--pad);
+}
+
+/* ---------- Mensagens de carregamento e erro ---------- */
+
+/* Ocupa o lugar do tabuleiro enquanto as cartas não chegam da API. */
+.status {
+  align-self: center;
+  justify-self: center;
+  max-width: 32rem;
+  padding: 1.5rem 2rem;
+  background: var(--card);
+  color: var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--lift);
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.status--error {
+  color: var(--red);
+}
+
+/* ---------- Botão de novo jogo ---------- */
+
+/* Botão redondo, com o ícone de recarregar desenhado por uma máscara SVG.
+   Fica no alto, à direita do tabuleiro. */
+.fab {
+  display: grid;
+  place-items: center;
+  align-self: start;
+  width: var(--fab-size);
+  height: var(--fab-size);
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--wine);
+  box-shadow: 0 3px 0 var(--wine-dark), 0 6px 10px -2px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  transition:
+    transform 80ms,
+    box-shadow 80ms,
+    background-color 120ms;
+}
+
+.fab::before {
+  content: "";
+  width: 26px;
+  height: 26px;
+  background: var(--card);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 12a8 8 0 1 1-2.34-5.66'/%3E%3Cpath d='M20 4v5h-5'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  transition: transform 300ms var(--ease);
+}
+
+.fab:hover {
+  background: #8f3532;
+}
+
+.fab:hover::before {
+  transform: rotate(90deg);
+}
+
+.fab:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--wine-dark), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.fab:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* ---------- Botões ---------- */
+
+/* Botão com espessura: a borda de baixo afunda quando ele é apertado. */
+.button {
+  padding: 10px 16px 9px;
+  border: 0;
+  border-radius: 8px;
+  color: var(--card);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: var(--wine);
+  box-shadow: 0 3px 0 var(--wine-dark), 0 5px 8px -2px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition:
+    transform 80ms,
+    box-shadow 80ms,
+    background-color 120ms;
+}
+
+.button:hover {
+  background: #8f3532;
+}
+
+.button:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 var(--wine-dark), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.button:focus-visible,
+.card:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* ---------- Tabuleiro ---------- */
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: var(--gap);
+  width: var(--board-size);
+  height: var(--board-size);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  perspective: 1400px;
+}
+
+.board__slot {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  animation: deal 420ms var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 30ms);
+}
+
+.board__slot:nth-child(1) { --i: 0; }
+.board__slot:nth-child(2) { --i: 1; }
+.board__slot:nth-child(3) { --i: 2; }
+.board__slot:nth-child(4) { --i: 3; }
+.board__slot:nth-child(5) { --i: 4; }
+.board__slot:nth-child(6) { --i: 5; }
+.board__slot:nth-child(7) { --i: 6; }
+.board__slot:nth-child(8) { --i: 7; }
+.board__slot:nth-child(9) { --i: 8; }
+.board__slot:nth-child(10) { --i: 9; }
+.board__slot:nth-child(11) { --i: 10; }
+.board__slot:nth-child(12) { --i: 11; }
+.board__slot:nth-child(13) { --i: 12; }
+.board__slot:nth-child(14) { --i: 13; }
+.board__slot:nth-child(15) { --i: 14; }
+.board__slot:nth-child(16) { --i: 15; }
+
+/* ---------- Carta ---------- */
+
+.card {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  color: inherit;
+  background: none;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 160ms var(--ease);
+}
+
+.card:disabled {
+  cursor: default;
+}
+
+.card:not(:disabled):hover {
+  transform: translateY(-4px);
+}
+
+.card:not(:disabled):active {
+  transform: translateY(0);
+}
+
+.card__inner {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transform-style: preserve-3d;
+  transition: transform var(--flip) var(--ease);
+}
+
+.card--up .card__inner {
+  transform: rotateY(180deg);
+}
+
+.card__back,
+.card__front {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  box-shadow: var(--lift);
+}
+
+/* Verso: margem de papel e estampa em losangos vinho, como num baralho
+   antigo, com um medalhão de lambda no centro. */
+.card__back {
+  background: var(--card);
+  transition: box-shadow 160ms var(--ease);
+}
+
+.card__back::before {
+  content: "";
+  position: absolute;
+  inset: 7%;
+  border-radius: 5px;
+  background:
+    repeating-linear-gradient(45deg, transparent 0 7px, rgba(246, 239, 223, 0.22) 7px 8px),
+    repeating-linear-gradient(-45deg, transparent 0 7px, rgba(246, 239, 223, 0.22) 7px 8px),
+    var(--wine);
+  box-shadow:
+    inset 0 0 0 3px var(--wine),
+    inset 0 0 0 4px rgba(246, 239, 223, 0.6);
+}
+
+.card__back::after {
+  content: "λ";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 38%;
+  aspect-ratio: 1;
+  padding-bottom: 0.08em;
+  border: 2px solid var(--wine);
+  border-radius: 50%;
+  color: var(--wine);
+  font-family: var(--serif);
+  font-size: calc(var(--board-size) / 16);
+  font-style: italic;
+  font-weight: 800;
+  line-height: 1;
+  background: var(--card);
+  box-shadow: 0 0 0 3px var(--card), 0 0 0 4px rgba(246, 239, 223, 0.6);
+  transform: translate(-50%, -50%);
+}
+
+.card:not(:disabled):hover .card__back {
+  box-shadow: var(--lift-high);
+}
+
+/* Frente: foto ou gravura impressa ocupando quase toda a carta, com uma
+   margem estreita de papel, como uma cópia fotográfica antiga. */
+.card__front {
+  display: grid;
+  padding: 5.5%;
+  background: var(--card);
+  transform: rotateY(180deg);
+  transition:
+    transform 240ms var(--ease),
+    box-shadow 240ms var(--ease);
+}
+
+.card__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+  border-radius: 4px;
+  background: #ebe2cc;
+  box-shadow: inset 0 0 0 1px rgba(43, 36, 32, 0.12);
+}
+
+/* Carta fechada não mostra a imagem. Num jogo novo, o Elm reaproveita os
+   mesmos elementos e troca só o `src`; sem esta regra, as casas que estavam
+   abertas mostrariam as cartas novas de relance enquanto viram. */
+.card:not(.card--up) .card__image {
+  visibility: hidden;
+}
+
+/* Zoom ao passar o mouse sobre um par já encontrado. Cartas fechadas ou
+   abertas na jogada atual não ampliam. O seletor parte do <li> porque o
+   botão da carta encontrada está desabilitado. Em telas de toque não há
+   hover de verdade, então o zoom fica desligado. */
+@media (hover: hover) {
+  .board__slot:hover {
+    z-index: 2;
+  }
+
+  /* A carta ampliada não captura o mouse: ao sair da casa dela, o zoom
+     fecha e o clique vai para a carta vizinha que estava por baixo. */
+  .card--matched .card__front {
+    pointer-events: none;
+  }
+
+  /* As cartas da borda crescem para dentro do tabuleiro, sem sair da tela.
+     O deslocamento é de 30% (metade do que a escala de 1,6 acrescenta). No
+     eixo X, as duas rotações de 180 graus (do miolo e da frente) se anulam. */
+  .board__slot:nth-child(4n + 1) { --zoom-x: 30%; }
+  .board__slot:nth-child(4n) { --zoom-x: -30%; }
+  .board__slot:nth-child(-n + 4) { --zoom-y: 30%; }
+  .board__slot:nth-child(n + 13) { --zoom-y: -30%; }
+
+  .board__slot:hover .card--matched .card__front {
+    transform: rotateY(180deg) translate(var(--zoom-x, 0), var(--zoom-y, 0)) scale(1.6);
+    box-shadow: 0 1px 0 var(--card-edge), 0 24px 40px -10px rgba(0, 0, 0, 0.55);
+  }
+}
+
+/* Par encontrado: selo dourado com visto no canto da carta. */
+.card--matched .card__front::after {
+  content: "✓";
+  position: absolute;
+  top: 2.5%;
+  right: 2.5%;
+  display: grid;
+  place-items: center;
+  width: 20%;
+  aspect-ratio: 1;
+  border: 2px solid var(--card);
+  border-radius: 50%;
+  color: var(--card);
+  font-size: calc(var(--board-size) / 40);
+  font-weight: 700;
+  background: var(--leaf);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  animation: stamp 300ms var(--ease) var(--flip) both;
+}
+
+/* Erro: margem da carta em vermelho. */
+.card--miss .card__front {
+  background: var(--red);
+}
+
+/* ---------- Vitória ---------- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(20, 38, 31, 0.6);
+  animation: fade-in 300ms ease-out 400ms both;
+}
+
+/* Uma carta grande com a mesma estampa do verso na moldura. */
+.victory {
+  position: relative;
+  width: min(100%, 360px);
+  margin: 0;
+  padding: 36px 30px 30px;
+  border: 0;
+  border-radius: 14px;
+  color: var(--ink);
+  text-align: center;
+  background:
+    linear-gradient(var(--card), var(--card)) padding-box,
+    repeating-linear-gradient(45deg, transparent 0 7px, rgba(246, 239, 223, 0.25) 7px 8px),
+    repeating-linear-gradient(-45deg, transparent 0 7px, rgba(246, 239, 223, 0.25) 7px 8px),
+    var(--wine);
+  background-clip: padding-box, border-box, border-box, border-box;
+  border: 12px solid transparent;
+  box-shadow: 0 1px 0 var(--card-edge), 0 30px 60px -20px rgba(0, 0, 0, 0.6);
+  animation: drop-in 400ms var(--ease) 500ms both;
+}
+
+.victory__title {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 3rem;
+  font-style: italic;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--wine);
+}
+
+.victory__text {
+  margin: 12px 0 24px;
+  color: var(--ink-soft);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ---------- Telas em pé ---------- */
+
+@media (max-aspect-ratio: 4 / 5) {
+  :root {
+    --board-size: min(calc(100vw - 2 * var(--pad)), calc(100dvh - 3 * var(--pad) - var(--fab-size)));
+    --gap: 8px;
+    --radius: 7px;
+  }
+
+  .table {
+    grid-template-columns: var(--board-size);
+  }
+
+  .fab {
+    order: -1;
+    justify-self: end;
+  }
+}
+
+/* ---------- Animações ---------- */
+
+@keyframes deal {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) rotate(-2deg);
+  }
+}
+
+@keyframes stamp {
+  from {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.98);
+  }
+}
+
+/* ---------- Menos movimento ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    transition-duration: 1ms !important;
+  }
+}
