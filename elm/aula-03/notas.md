@@ -138,6 +138,8 @@ Err (Field "group" (Failure ("esperava uma letra, veio ab") <internals>))
 
 Teste também um JSON sem o campo `url`. Que erro aparece?
 
+**Saiba mais:** [`Json.Decode`](https://package.elm-lang.org/packages/elm/json/latest/Json-Decode) · [`D.map3`](https://package.elm-lang.org/packages/elm/json/latest/Json-Decode#map3) · [`D.andThen`](https://package.elm-lang.org/packages/elm/json/latest/Json-Decode#andThen) · [guia: JSON](https://guide.elm-lang.org/effects/json.html)
+
 ---
 
 ## 2. Cartas vindas de fora (15 min)
@@ -212,6 +214,8 @@ Depois:
 **Deu certo?** O jogo funciona exatamente como antes. O compilador vai
 apontar cada lugar que ainda usa `index` ou `cardUrl`: siga as mensagens.
 
+**Saiba mais:** [`List.indexedMap`](https://package.elm-lang.org/packages/elm/core/latest/List#indexedMap) · [`List.concatMap`](https://package.elm-lang.org/packages/elm/core/latest/List#concatMap) · [guia: registros](https://guide.elm-lang.org/core_language.html#records)
+
 ---
 
 ## 3. A requisição (10 min)
@@ -246,6 +250,8 @@ Leia a assinatura com calma:
   um `Http.Error`.
 
 **Deu certo?** Compila. Ainda não muda nada na tela.
+
+**Saiba mais:** [`Http.get`](https://package.elm-lang.org/packages/elm/http/latest/Http#get) · [`Http.expectJson`](https://package.elm-lang.org/packages/elm/http/latest/Http#expectJson) · [`Url.Builder`](https://package.elm-lang.org/packages/elm/url/latest/Url-Builder) · [`Cmd`](https://package.elm-lang.org/packages/elm/core/latest/Platform-Cmd) · [guia: HTTP](https://guide.elm-lang.org/effects/http.html)
 
 ---
 
@@ -355,6 +361,8 @@ Por fim, apague `mockCards` e `mockCard`.
   `Url.Builder.int "delay" 2000` na lista de parâmetros de `getCards`. O
   servidor espera 2 segundos antes de responder. Depois, tire.
 
+**Saiba mais:** [`Browser.element`](https://package.elm-lang.org/packages/elm/browser/latest/Browser#element) · [`Cmd.none`](https://package.elm-lang.org/packages/elm/core/latest/Platform-Cmd#none) · [guia: tipos customizados](https://guide.elm-lang.org/types/custom_types.html) · [guia: pattern matching](https://guide.elm-lang.org/types/pattern_matching.html)
+
 ---
 
 ## 5. Erros (15 min)
@@ -400,6 +408,8 @@ há como esquecer o caso "sem rede".
 Desafio rápido: mostre "Tema não encontrado." só para o 404. Dica: um
 `case` aceita o padrão `Http.BadStatus 404` antes de `Http.BadStatus status`.
 
+**Saiba mais:** [`Http.Error`](https://package.elm-lang.org/packages/elm/http/latest/Http#Error) · [`Result`](https://package.elm-lang.org/packages/elm/core/latest/Result) · [guia: Result](https://guide.elm-lang.org/error_handling/result.html)
+
 ---
 
 ## 6. Novo jogo (10 min)
@@ -417,6 +427,8 @@ No `update`, o `NewGameClicked` volta para `Loading` e dispara
 **Deu certo?** Com `equalPairs = True` em `fetchCards`, cada partida
 pode trazer cartas diferentes. Com `"simpsons"`, o servidor sorteia 8 dos 9
 personagens a cada pedido.
+
+**Saiba mais:** [`Cmd`](https://package.elm-lang.org/packages/elm/core/latest/Platform-Cmd) · [`Http.get`](https://package.elm-lang.org/packages/elm/http/latest/Http#get)
 
 ---
 
@@ -439,6 +451,8 @@ Pergunta: com pares iguais, as duas cartas do par têm o mesmo `group`, a
 mesma `url` e a mesma `description`. Como o `Game` sabe que você não clicou
 duas vezes na mesma carta?
 
+**Saiba mais:** [`Html.Events.onCheck`](https://package.elm-lang.org/packages/elm/html/latest/Html-Events#onCheck) · [`Html.Attributes.checked`](https://package.elm-lang.org/packages/elm/html/latest/Html-Attributes#checked)
+
 ### B. Escolha de tema
 
 1. Em `Api.elm`, crie `type alias Theme = { id : String, name : String }`,
@@ -449,6 +463,8 @@ duas vezes na mesma carta?
 4. Mostre um `select` com um `option` por tema. Use `onInput ThemeSelected`:
    o valor recebido é o `value` do `option` escolhido, ou seja, o `id`.
 5. Ao trocar de tema, comece um jogo novo.
+
+**Saiba mais:** [`Cmd.batch`](https://package.elm-lang.org/packages/elm/core/latest/Platform-Cmd#batch) · [`Html.select`](https://package.elm-lang.org/packages/elm/html/latest/Html#select) · [`Html.Events.onInput`](https://package.elm-lang.org/packages/elm/html/latest/Html-Events#onInput) · [`Html.Attributes.selected`](https://package.elm-lang.org/packages/elm/html/latest/Html-Attributes#selected)
 
 ### C. Desvirar o par errado sozinho
 
@@ -476,6 +492,8 @@ de o segundo passar, errar de novo, e o timer **antigo** desvirar o par
 **novo** antes da hora. Uma solução é levar o estado junto na mensagem,
 `MismatchTimeout Turn`, e só desvirar se `game.turn` ainda for igual a ele.
 
+**Saiba mais:** [`Process.sleep`](https://package.elm-lang.org/packages/elm/core/latest/Process#sleep) · [`Task.perform`](https://package.elm-lang.org/packages/elm/core/latest/Task#perform) · [`Task`](https://package.elm-lang.org/packages/elm/core/latest/Task)
+
 ---
 
 ## Resumo
@@ -488,3 +506,5 @@ de o segundo passar, errar de novo, e o timer **antigo** desvirar o par
   falha.
 * Um tipo soma (`Loading | Failed | Playing`) deixa a tela coerente com o
   estado da requisição.
+
+**Saiba mais:** [`elm/http`](https://package.elm-lang.org/packages/elm/http/latest/Http) · [`elm/json`](https://package.elm-lang.org/packages/elm/json/latest/Json-Decode) · [guia: efeitos: HTTP e JSON](https://guide.elm-lang.org/effects/)
