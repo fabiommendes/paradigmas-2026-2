@@ -138,7 +138,14 @@ runIf cond fn =
 -}
 hideMismatch : Game -> Game
 hideMismatch game =
-    Debug.todo "hideMismatch"
+    case game.turn of
+        TwoRevealed ( _, idA ) ( _, idB ) ->
+            { cards = game.cards |> setFace Down [ idA, idB ]
+            , turn = Waiting
+            }
+
+        _ ->
+            game
 
 
 {-| Indica se todas as cartas já formam pares.

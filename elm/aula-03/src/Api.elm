@@ -1,4 +1,4 @@
-module Api exposing (CardInfo, getCards)
+module Api exposing (CardInfo, Theme, getCards, getThemes)
 
 {-| Comunicação com a API do jogo da memória (veja `server/main.py`).
 -}
@@ -6,6 +6,31 @@ module Api exposing (CardInfo, getCards)
 import Http
 import Json.Decode as D exposing (Decoder)
 import Url.Builder
+
+
+
+-- TEMAS
+
+
+type alias Theme =
+    { id : String
+    , name : String
+    }
+
+
+themeDecoder : Decoder Theme
+themeDecoder =
+    D.map2 Theme
+        (D.field "id" D.string)
+        (D.field "name" D.string)
+
+
+getThemes : (Result Http.Error (List Theme) -> msg) -> Cmd msg
+getThemes toMsg =
+    Http.get
+        { url = "/api/themes"
+        , expect = Http.expectJson toMsg (D.list themeDecoder)
+        }
 
 
 

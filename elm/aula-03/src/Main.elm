@@ -4,12 +4,12 @@ module Main exposing (main)
 Elm (modelo, mensagens, `update` e `view`).
 -}
 
-import Api exposing (CardInfo)
+import Api exposing (CardInfo, Theme)
 import Browser
 import Game exposing (Card, Face(..), Game, Turn(..))
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onCheck, onClick, onInput)
 import Http
 import Process
 import Rng exposing (Seed)
@@ -39,6 +39,9 @@ main =
 type alias Model =
     { seed : Seed
     , state : State
+    , themes : List Theme
+    , theme : String
+    , equalPairs : Bool
     }
 
 
@@ -52,12 +55,21 @@ type State
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { seed = Rng.seed flags, state = Loading }, fetchCards )
+    let
+        model =
+            { seed = Rng.seed flags
+            , state = Loading
+            , themes = []
+            , theme = "animals"
+            , equalPairs = False
+            }
+    in
+    ( model, Cmd.batch [ Api.getThemes GotThemes, fetchCards model ] )
 
 
-fetchCards : Cmd Msg
-fetchCards =
-    Api.getCards "animals" False GotCards
+fetchCards : Model -> Cmd Msg
+fetchCards model =
+    Api.getCards model.theme model.equalPairs GotCards
 
 
 
@@ -66,9 +78,12 @@ fetchCards =
 
 type Msg
     = CardClicked Int
-    | MismatchTimeout
+    | MismatchTimeout Turn
     | NewGameClicked
     | GotCards (Result Http.Error (List CardInfo))
+    | GotThemes (Result Http.Error (List Theme))
+    | ThemeSelected String
+    | EqualPairsToggled Bool
 
 
 {-| Tempo, em milissegundos, que as duas cartas erradas ficam à mostra.
@@ -86,7 +101,7 @@ update msg model =
                 ( game, nextSeed ) =
                     Game.new model.seed infos
             in
-            ( { seed = nextSeed, state = Playing game }, Cmd.none )
+            ( { model | seed = nextSeed, state = Playing game }, Cmd.none )
 
         GotCards (Err err) ->
             ( { model | state = Failed err }, Cmd.none )
@@ -94,16 +109,61 @@ update msg model =
         CardClicked id ->
             case model.state of
                 Playing game ->
-                    ( { model | state = Playing (Game.reveal id game) }, Cmd.none )
+                    let
+                        newGame =
+                            Game.reveal id game
+                    in
+                    ( { model | state = Playing newGame }, hideLater newGame.turn )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        MismatchTimeout turn ->
+            case model.state of
+                -- Só desvira se as mesmas duas cartas ainda estiverem à mostra.
+                -- O jogador pode ter clicado em outra carta antes do tempo.
+                Playing game ->
+                    if game.turn == turn then
+                        ( { model | state = Playing (Game.hideMismatch game) }, Cmd.none )
+
+                    else
+                        ( model, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
 
         NewGameClicked ->
-            ( { model | state = Loading }, fetchCards )
+            startNewGame model
 
-        MismatchTimeout ->
+        GotThemes (Ok themes) ->
+            ( { model | themes = themes }, Cmd.none )
+
+        GotThemes (Err _) ->
             ( model, Cmd.none )
+
+        ThemeSelected theme ->
+            startNewGame { model | theme = theme }
+
+        EqualPairsToggled equalPairs ->
+            startNewGame { model | equalPairs = equalPairs }
+
+
+startNewGame : Model -> ( Model, Cmd Msg )
+startNewGame model =
+    ( { model | state = Loading }, fetchCards model )
+
+
+{-| Agenda `MismatchTimeout` quando há duas cartas erradas à mostra.
+-}
+hideLater : Turn -> Cmd Msg
+hideLater turn =
+    case turn of
+        TwoRevealed _ _ ->
+            Process.sleep mismatchDelay
+                |> Task.perform (\_ -> MismatchTimeout turn)
+
+        _ ->
+            Cmd.none
 
 
 
@@ -116,7 +176,8 @@ view : Model -> Html Msg
 view model =
     main_
         [ class "table" ]
-        [ case model.state of
+        [ viewToolbar model
+        , case model.state of
             Loading ->
                 p [ class "status" ] [ text "Carregando as cartas..." ]
 
@@ -131,6 +192,31 @@ view model =
                     (game.cards |> List.map (viewCard game.turn))
         , viewNewGameButton
         ]
+
+
+viewToolbar : Model -> Html Msg
+viewToolbar model =
+    div [ class "toolbar" ]
+        [ label []
+            [ text "Tema "
+            , select [ onInput ThemeSelected ]
+                (model.themes |> List.map (viewThemeOption model.theme))
+            ]
+        , label []
+            [ input
+                [ type_ "checkbox"
+                , checked model.equalPairs
+                , onCheck EqualPairsToggled
+                ]
+                []
+            , text " Pares iguais"
+            ]
+        ]
+
+
+viewThemeOption : String -> Theme -> Html Msg
+viewThemeOption current theme =
+    option [ value theme.id, selected (theme.id == current) ] [ text theme.name ]
 
 
 errorToString : Http.Error -> String
