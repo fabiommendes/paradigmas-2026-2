@@ -81,13 +81,20 @@ new seed =
     ( game, newSeed )
 
 
-{-| Vira a carta com este `id`. Cartas que já estão viradas são ignoradas.
+{-| Vira a carta com este `id`. Cartas que já formaram par são ignoradas.
 -}
 reveal : CardId -> Game -> Game
 reveal id game =
-    findCard id game
-        |> Maybe.map (\c -> pick c game)
-        |> Maybe.withDefault game
+    case findCard id game of
+        Just card ->
+            if card.face == Permanent then
+                game
+
+            else
+                pick card game
+
+        Nothing ->
+            game
 
 
 {-| Processa a carta escolhida de acordo com o estado da jogada.

@@ -21,7 +21,7 @@ Ao final da aula, o jogo:
 | 5. Erros                       | 15 min |
 | 6. Novo jogo                   | 10 min |
 
-Terminou antes? Há quatro [extras](#extras) no fim.
+Terminou antes? Há três [extras](#extras) no fim.
 
 ---
 
@@ -450,12 +450,7 @@ duas vezes na mesma carta?
    o valor recebido é o `value` do `option` escolhido, ou seja, o `id`.
 5. Ao trocar de tema, comece um jogo novo.
 
-### C. Cartas já encontradas
-
-Com uma carta virada, clique numa carta que já formou par. O que acontece?
-Corrija `Game.reveal` para ignorar cartas com face `Permanent`.
-
-### D. Desvirar o par errado sozinho
+### C. Desvirar o par errado sozinho
 
 Hoje, um par errado fica à mostra até o próximo clique. Faça as duas cartas
 desvirarem sozinhas depois de `mismatchDelay` (1 segundo).
