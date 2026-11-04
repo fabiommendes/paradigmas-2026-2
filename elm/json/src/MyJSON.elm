@@ -1,42 +1,61 @@
 module MyJSON exposing (..)
 import Dict exposing (Dict)
 
-
 type Value
-   = Null
-   | Bool Bool
-   | Float Float
-   | Int Int
-   | String String
-   | Array (List Value)
-   | Object (Dict String Value)
+    = Null
+    | True
+    | False
+    | Int Int
+    | Float Float
+    | String String
+    | Array (List Value)
+    | Object (Dict String Value)
 
-
-
-string : String -> Value
-string = String
-
-int : Int -> Value
-int = Int
-
+null : Value
+null = Null
 
 bool : Bool -> Value
-bool = Bool
+bool value =
+    if value then
+        True
+    else
+        False
+
+int : Int -> Value
+int value =
+    Int value
+
+float : Float -> Value
+float value =
+    Float value
+
+string : String -> Value
+string value =
+    String value
+
 
 list : (a -> Value) -> List a -> Value
-list fn = List.map fn >> Array
-
+list fn lst =
+    lst
+        |> List.map fn
+        |> Array
 
 object : List (String, Value) -> Value
-object = Dict.fromList >> Object
+object data =
+    data
+        |> Dict.fromList
+        |> Object
 
 
-type alias User = { name: String, age: Int }
-
+type alias User =
+    { name: String
+    , age: Int
+    }
 
 encode : User -> Value
 encode user =
     object
         [ ("name", string user.name)
-        , ("age", int user.age)
+        , ("age", int user.age )
         ]
+

@@ -4,21 +4,44 @@ import Json.Encode as E exposing (Value)
 import Json.Decode as D exposing (Decoder)
 import Json.Decode.Pipeline as D
 
-type alias Address =
-    { street: String
-    , city: String
-    }
+
+type Address
+    = Real { street: String, city: String }
+    | Virtual { uri: String }
+
 
 encode : Address -> Value
 encode address =
-    E.object
-        [ ("street", E.string address.street)
-        , ("city", E.string address.city)
-        ]
+    case address of
+        Real { street, city } ->
+            E.object
+                [ ("type", E.string "real")
+                , ("street", E.string street)
+                , ("city", E.string city)
+                ]
+        Virtual { uri } ->
+            E.object
+                [ ("type", E.string "virtual")
+                , ("uri", E.string uri)
+                ]
 
 
 decoder : Decoder Address
 decoder =
-    D.succeed Address                             -- Decoder (String -> String -> Address)
-        |> D.required "street" D.string           -- Decoder (String -> Address)
-        |> D.optional "city" D.string "Brasília"  -- Decoder Address
+    (D.field "type" D.string)
+        |> D.andThen (
+            \typ ->
+            case typ of
+                "real" ->
+                    D.succeed (\street city -> Real {street = street, city = city })
+                        |> D.required "street" D.string
+                        |> D.required "city" D.string
+
+                "virtual" ->
+                    D.succeed (\uri -> Virtual {uri = uri })
+                        |> D.required "uri" D.string
+
+                _ ->
+                    D.fail ("Tipo inválido: " ++ typ ++ ", esperava real ou virtual")
+
+        )
