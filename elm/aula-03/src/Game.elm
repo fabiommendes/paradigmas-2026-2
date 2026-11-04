@@ -13,6 +13,7 @@ quando são iguais.
 
 -}
 
+import Api exposing (CardInfo)
 import Rng exposing (Seed)
 
 
@@ -22,13 +23,13 @@ type alias Game =
     }
 
 
-{-| Assets de cada carta são identificados por um par (letra, numero), como
-"a1", "b2", etc
+{-| Cada carta pertence a um grupo; a imagem e a descrição vêm da API.
 -}
 type alias Card =
     { id : CardId
     , group : Char
-    , index : Int
+    , description : String
+    , url : String
     , face : Face
     }
 
@@ -55,30 +56,26 @@ type Turn
     | TwoRevealed CardData CardData
 
 
-{-| Embaralha as cartas e começa um jogo. Devolve também a semente seguinte,
-para a próxima partida sair diferente.
+{-| Embaralha as cartas recebidas e começa um jogo. Devolve também a
+semente seguinte, para a próxima partida sair diferente.
 -}
-new : Seed -> ( Game, Seed )
-new seed =
+new : Seed -> List CardInfo -> ( Game, Seed )
+new seed infos =
     let
         ( cards, newSeed ) =
-            [ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' ]
-                |> List.map (\chr -> [ { group = chr, index = 1 }, { group = chr, index = 2 } ])
-                |> List.concat
+            infos
                 |> List.indexedMap
-                    (\id { group, index } ->
+                    (\id info ->
                         { id = id
-                        , group = group
-                        , index = index
+                        , group = info.group
+                        , description = info.description
+                        , url = info.url
                         , face = Down
                         }
                     )
                 |> Rng.shuffle seed
-
-        game =
-            { cards = cards, turn = Waiting }
     in
-    ( game, newSeed )
+    ( { cards = cards, turn = Waiting }, newSeed )
 
 
 {-| Vira a carta com este `id`. Cartas que já formaram par são ignoradas.
