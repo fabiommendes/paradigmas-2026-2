@@ -64,7 +64,7 @@ Repare:
 * São 16 cartas, duas por grupo, **sem embaralhar**. Embaralhar continua
   sendo trabalho do Elm (`Rng.shuffle`).
 * `url` pode ser um caminho do nosso servidor (`/cards/...`) ou uma URL
-  externa (Pokémon e Simpsons).
+  externa (Pokémon).
 * `group` é uma **string** de uma letra. No Elm queremos um `Char`.
 * `equalPairs = true` manda a mesma carta duas vezes em cada grupo (jogo da
   memória tradicional).

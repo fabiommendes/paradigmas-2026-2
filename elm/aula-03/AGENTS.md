@@ -34,7 +34,7 @@ O gerenciador de pacotes é o pnpm.
 - Efeitos visuais ficam no CSS. O Elm só escolhe classes.
 - O layout assume o tabuleiro 4 × 4 com 16 cartas. Cada tema é descrito
   em `server/data/themes.json`; imagens locais ficam em `server/cards/<tema>/`
-  com um `CREDITS.md`. Imagens com direitos de terceiros (Pokémon, Simpsons)
+  com um `CREDITS.md`. Imagens do Pokémon
   não são copiadas: o tema aponta para URLs externas. Ver `server/CREDITS.md`.
 - Estética de mesa de jogo: feltro verde, cartas de papel-cartão, tons de
   vinho e creme, fontes Alegreya e Alegreya Sans. Sem neon, brilho ou

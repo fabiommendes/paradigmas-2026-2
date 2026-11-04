@@ -86,6 +86,7 @@ button {
 :root {
   --pad: clamp(12px, 3vmin, 28px);
   --fab-size: 56px;
+  --toolbar-height: 2.75rem;
   --board-size: min(
     calc(100dvh - 2 * var(--pad)),
     calc(100vw - 3 * var(--pad) - var(--fab-size)),
@@ -122,6 +123,130 @@ button {
 
 .status--error {
   color: var(--red);
+}
+
+/* ---------- Barra de opções ---------- */
+
+/* Faixa acima do tabuleiro com a escolha de tema (select) e a caixa de
+   pares iguais (checkbox). Os controles imitam o papel-cartão das cartas.
+
+   <div class="toolbar">
+     <label>Tema <select>...</select></label>
+     <label><input type="checkbox"> Pares iguais</label>
+   </div>
+*/
+.toolbar {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem 2rem;
+  min-height: var(--toolbar-height);
+  color: var(--card);
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.toolbar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Select: etiqueta de papel com a seta em vinho. */
+.toolbar select {
+  appearance: none;
+  min-width: 11rem;
+  padding: 7px 38px 6px 14px;
+  border: 0;
+  border-radius: 8px;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-transform: none;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%237d2d2a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      no-repeat right 14px center / 12px 8px,
+    var(--card);
+  box-shadow: var(--lift);
+  cursor: pointer;
+  transition:
+    transform 80ms,
+    box-shadow 80ms;
+}
+
+.toolbar select:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--lift-high);
+}
+
+.toolbar option {
+  color: var(--ink);
+  background: var(--card);
+}
+
+/* Checkbox: quadradinho de papel que vira um selo vinho quando marcado. */
+.toolbar input[type="checkbox"] {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 1.4rem;
+  height: 1.4rem;
+  margin: 0;
+  border-radius: 5px;
+  background: var(--card);
+  box-shadow: var(--lift);
+  cursor: pointer;
+  transition:
+    background-color 120ms,
+    transform 80ms;
+}
+
+.toolbar input[type="checkbox"]::before {
+  content: "";
+  width: 0.8rem;
+  height: 0.8rem;
+  background: var(--card);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.5l2.5 2.5L10 3' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  transform: scale(0);
+  transition: transform 120ms var(--ease);
+}
+
+.toolbar input[type="checkbox"]:checked {
+  background: var(--wine);
+  box-shadow: 0 2px 0 var(--wine-dark), 0 4px 6px -2px rgba(0, 0, 0, 0.35);
+}
+
+.toolbar input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+.toolbar label:hover input[type="checkbox"] {
+  transform: translateY(-1px);
+}
+
+.toolbar select:focus-visible,
+.toolbar input[type="checkbox"]:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* Com a barra, o tabuleiro encolhe para caber na altura da tela. */
+.table:has(.toolbar) {
+  --board-size: min(
+    calc(100dvh - 3 * var(--pad) - var(--toolbar-height)),
+    calc(100vw - 3 * var(--pad) - var(--fab-size)),
+    820px
+  );
 }
 
 /* ---------- Botão de novo jogo ---------- */
@@ -503,6 +628,17 @@ button {
   .fab {
     order: -1;
     justify-self: end;
+  }
+
+  .table:has(.toolbar) {
+    --board-size: min(
+      calc(100vw - 2 * var(--pad)),
+      calc(100dvh - 4 * var(--pad) - var(--fab-size) - var(--toolbar-height))
+    );
+  }
+
+  .toolbar {
+    order: -2;
   }
 }
 

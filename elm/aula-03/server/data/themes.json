@@ -211,115 +211,115 @@
     "id": "simpsons",
     "name": "Os Simpsons",
     "description": "Duas imagens diferentes de cada personagem. 8 dos 9 são sorteados.",
-    "cover": "https://cdn.thesimpsonsapi.com/500/character/3.webp",
+    "cover": "/cards/simpsons/a1.webp",
     "cards": [
       {
         "group": "a",
         "index": 1,
         "description": "Bart",
-        "url": "https://cdn.thesimpsonsapi.com/500/character/3.webp"
+        "url": "/cards/simpsons/a1.webp"
       },
       {
         "group": "a",
         "index": 2,
         "description": "Bart",
-        "url": "https://upload.wikimedia.org/wikipedia/en/a/aa/Bart_Simpson_200px.png"
+        "url": "/cards/simpsons/a2.webp"
       },
       {
         "group": "b",
         "index": 1,
         "description": "Lisa",
-        "url": "https://cdn.thesimpsonsapi.com/500/character/4.webp"
+        "url": "/cards/simpsons/b1.webp"
       },
       {
         "group": "b",
         "index": 2,
         "description": "Lisa",
-        "url": "https://upload.wikimedia.org/wikipedia/en/e/ec/Lisa_Simpson.png"
+        "url": "/cards/simpsons/b2.webp"
       },
       {
         "group": "c",
         "index": 1,
         "description": "Homer",
-        "url": "https://cdn.thesimpsonsapi.com/500/character/1.webp"
+        "url": "/cards/simpsons/c1.webp"
       },
       {
         "group": "c",
         "index": 2,
         "description": "Homer",
-        "url": "https://upload.wikimedia.org/wikipedia/en/0/02/Homer_Simpson_2006.png"
+        "url": "/cards/simpsons/c2.webp"
       },
       {
         "group": "d",
         "index": 1,
         "description": "Maggie",
-        "url": "https://cdn.thesimpsonsapi.com/500/character/5.webp"
+        "url": "/cards/simpsons/d1.webp"
       },
       {
         "group": "d",
         "index": 2,
         "description": "Maggie",
-        "url": "https://upload.wikimedia.org/wikipedia/en/9/9d/Maggie_Simpson.png"
+        "url": "/cards/simpsons/d2.webp"
       },
       {
         "group": "e",
         "index": 1,
         "description": "Marge",
-        "url": "https://cdn.thesimpsonsapi.com/500/character/2.webp"
+        "url": "/cards/simpsons/e1.webp"
       },
       {
         "group": "e",
         "index": 2,
         "description": "Marge",
-        "url": "https://upload.wikimedia.org/wikipedia/en/0/0b/Marge_Simpson.png"
+        "url": "/cards/simpsons/e2.webp"
       },
       {
         "group": "f",
         "index": 1,
         "description": "Mr. Burns",
-        "url": "https://cdn.thesimpsonsapi.com/500/character/13.webp"
+        "url": "/cards/simpsons/f1.webp"
       },
       {
         "group": "f",
         "index": 2,
         "description": "Mr. Burns",
-        "url": "https://upload.wikimedia.org/wikipedia/en/a/a6/Burns_Baby_Burns.jpg"
+        "url": "/cards/simpsons/f2.webp"
       },
       {
         "group": "g",
         "index": 1,
         "description": "Milhouse",
-        "url": "https://cdn.thesimpsonsapi.com/500/character/22.webp"
+        "url": "/cards/simpsons/g1.webp"
       },
       {
         "group": "g",
         "index": 2,
         "description": "Milhouse",
-        "url": "https://upload.wikimedia.org/wikipedia/en/1/11/Milhouse_Van_Houten.png"
+        "url": "/cards/simpsons/g2.webp"
       },
       {
         "group": "h",
         "index": 1,
         "description": "Moe",
-        "url": "https://cdn.thesimpsonsapi.com/500/character/16.webp"
+        "url": "/cards/simpsons/h1.webp"
       },
       {
         "group": "h",
         "index": 2,
         "description": "Moe",
-        "url": "https://upload.wikimedia.org/wikipedia/en/5/5e/Dumbbell_Indemnity.png"
+        "url": "/cards/simpsons/h2.webp"
       },
       {
         "group": "i",
         "index": 1,
         "description": "Ned Flanders",
-        "url": "https://upload.wikimedia.org/wikipedia/en/8/84/Ned_Flanders.png"
+        "url": "/cards/simpsons/i1.webp"
       },
       {
         "group": "i",
         "index": 2,
         "description": "Ned Flanders",
-        "url": "https://cdn.thesimpsonsapi.com/500/character/1163.webp"
+        "url": "/cards/simpsons/i2.webp"
       }
     ]
   }
