@@ -4,11 +4,13 @@ module Main exposing (main)
 Elm (modelo, mensagens, `update` e `view`).
 -}
 
+import Api exposing (CardInfo, Theme)
 import Browser
 import Game exposing (Card, Face(..), Game, Turn(..))
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onCheck, onClick, onInput)
+import Http
 import Process
 import Rng exposing (Seed)
 import Task
@@ -35,23 +37,39 @@ main =
 
 
 type alias Model =
-    { game : Game
-    , seed : Seed
+    { seed : Seed
+    , state : State
+    , themes : List Theme
+    , theme : String
+    , equalPairs : Bool
     }
+
+
+{-| Em que ponto está a requisição das cartas.
+-}
+type State
+    = Loading
+    | Failed Http.Error
+    | Playing Game
 
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( newModel (Rng.seed flags), Cmd.none )
-
-
-newModel : Seed -> Model
-newModel seed =
     let
-        ( game, nextSeed ) =
-            Game.new seed
+        model =
+            { seed = Rng.seed flags
+            , state = Loading
+            , themes = []
+            , theme = "animals"
+            , equalPairs = False
+            }
     in
-    { game = game, seed = nextSeed }
+    ( model, Cmd.batch [ Api.getThemes GotThemes, fetchCards model ] )
+
+
+fetchCards : Model -> Cmd Msg
+fetchCards model =
+    Api.getCards model.theme model.equalPairs GotCards
 
 
 
@@ -60,8 +78,12 @@ newModel seed =
 
 type Msg
     = CardClicked Int
-    | MismatchTimeout
+    | MismatchTimeout Turn
     | NewGameClicked
+    | GotCards (Result Http.Error (List CardInfo))
+    | GotThemes (Result Http.Error (List Theme))
+    | ThemeSelected String
+    | EqualPairsToggled Bool
 
 
 {-| Tempo, em milissegundos, que as duas cartas erradas ficam à mostra.
@@ -74,18 +96,74 @@ mismatchDelay =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        GotCards (Ok infos) ->
+            let
+                ( game, nextSeed ) =
+                    Game.new model.seed infos
+            in
+            ( { model | seed = nextSeed, state = Playing game }, Cmd.none )
+
+        GotCards (Err err) ->
+            ( { model | state = Failed err }, Cmd.none )
+
         CardClicked id ->
-            ( { model | game = Game.reveal id model.game }, Cmd.none )
+            case model.state of
+                Playing game ->
+                    let
+                        newGame =
+                            Game.reveal id game
+                    in
+                    ( { model | state = Playing newGame }, hideLater newGame.turn )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        MismatchTimeout turn ->
+            case model.state of
+                -- Só desvira se as mesmas duas cartas ainda estiverem à mostra.
+                -- O jogador pode ter clicado em outra carta antes do tempo.
+                Playing game ->
+                    if game.turn == turn then
+                        ( { model | state = Playing (Game.hideMismatch game) }, Cmd.none )
+
+                    else
+                        ( model, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
         NewGameClicked ->
-            let
-                ( newGame, newSeed ) =
-                    Game.new model.seed
-            in
-            ( { game = newGame, seed = newSeed }, Cmd.none )
+            startNewGame model
 
-        MismatchTimeout ->
+        GotThemes (Ok themes) ->
+            ( { model | themes = themes }, Cmd.none )
+
+        GotThemes (Err _) ->
             ( model, Cmd.none )
+
+        ThemeSelected theme ->
+            startNewGame { model | theme = theme }
+
+        EqualPairsToggled equalPairs ->
+            startNewGame { model | equalPairs = equalPairs }
+
+
+startNewGame : Model -> ( Model, Cmd Msg )
+startNewGame model =
+    ( { model | state = Loading }, fetchCards model )
+
+
+{-| Agenda `MismatchTimeout` quando há duas cartas erradas à mostra.
+-}
+hideLater : Turn -> Cmd Msg
+hideLater turn =
+    case turn of
+        TwoRevealed _ _ ->
+            Process.sleep mismatchDelay
+                |> Task.perform (\_ -> MismatchTimeout turn)
+
+        _ ->
+            Cmd.none
 
 
 
@@ -98,13 +176,69 @@ view : Model -> Html Msg
 view model =
     main_
         [ class "table" ]
-        [ ol
-            [ class "board"
-            , attribute "aria-label" "Tabuleiro"
-            ]
-            (model.game.cards |> List.map (viewCard model.game.turn))
+        [ viewToolbar model
+        , case model.state of
+            Loading ->
+                p [ class "status" ] [ text "Carregando as cartas..." ]
+
+            Failed err ->
+                p [ class "status status--error" ] [ text (errorToString err) ]
+
+            Playing game ->
+                ol
+                    [ class "board"
+                    , attribute "aria-label" "Tabuleiro"
+                    ]
+                    (game.cards |> List.map (viewCard game.turn))
         , viewNewGameButton
         ]
+
+
+viewToolbar : Model -> Html Msg
+viewToolbar model =
+    div [ class "toolbar" ]
+        [ label []
+            [ text "Tema "
+            , select [ onInput ThemeSelected ]
+                (model.themes |> List.map (viewThemeOption model.theme))
+            ]
+        , label []
+            [ input
+                [ type_ "checkbox"
+                , checked model.equalPairs
+                , onCheck EqualPairsToggled
+                ]
+                []
+            , text " Pares iguais"
+            ]
+        ]
+
+
+viewThemeOption : String -> Theme -> Html Msg
+viewThemeOption current theme =
+    option [ value theme.id, selected (theme.id == current) ] [ text theme.name ]
+
+
+errorToString : Http.Error -> String
+errorToString err =
+    case err of
+        Http.BadUrl url ->
+            "URL inválida: " ++ url
+
+        Http.Timeout ->
+            "O servidor demorou demais para responder."
+
+        Http.NetworkError ->
+            "Sem conexão com o servidor. A API está rodando?"
+
+        Http.BadStatus 404 ->
+            "Tema não encontrado."
+
+        Http.BadStatus status ->
+            "O servidor respondeu com erro " ++ String.fromInt status ++ "."
+
+        Http.BadBody message ->
+            "Resposta inesperada do servidor: " ++ message
 
 
 viewNewGameButton : Html Msg
@@ -153,19 +287,14 @@ viewCard turn card =
                     ]
                     [ img
                         [ class "card__image"
-                        , src (cardUrl card)
-                        , alt ""
+                        , src card.url
+                        , alt card.description
                         ]
                         []
                     ]
                 ]
             ]
         ]
-
-
-cardUrl : Card -> String
-cardUrl card =
-    "cards/animals/" ++ (card.group |> String.fromChar) ++ (card.index |> String.fromInt) ++ ".webp"
 
 
 isMissed : Turn -> Card -> Bool
