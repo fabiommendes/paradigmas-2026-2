@@ -20,6 +20,7 @@ import Rng exposing (Seed)
 type alias Game =
     { cards : List Card
     , turn : Turn
+    , flips : Int
     }
 
 
@@ -75,7 +76,7 @@ new seed infos =
                     )
                 |> Rng.shuffle seed
     in
-    ( { cards = cards, turn = Waiting }, newSeed )
+    ( { cards = cards, turn = Waiting, flips = 0 }, newSeed )
 
 
 {-| Vira a carta com este `id`. Cartas que já formaram par são ignoradas.
@@ -95,6 +96,9 @@ reveal id game =
 
 
 {-| Processa a carta escolhida de acordo com o estado da jogada.
+
+Cada carta que vira para cima conta uma virada em `flips`.
+
 -}
 pick : Card -> Game -> Game
 pick card game =
@@ -102,6 +106,7 @@ pick card game =
         Waiting ->
             { cards = game.cards |> setFace Up [ card.id ]
             , turn = OneRevealed ( card.group, card.id )
+            , flips = game.flips + 1
             }
 
         OneRevealed ( group, id ) ->
@@ -111,16 +116,19 @@ pick card game =
             else if card.group == group then
                 { cards = game.cards |> setFace Permanent [ card.id, id ]
                 , turn = Waiting
+                , flips = game.flips + 1
                 }
 
             else
                 { cards = game.cards |> setFace Up [ card.id ]
                 , turn = TwoRevealed ( card.group, card.id ) ( group, id )
+                , flips = game.flips + 1
                 }
 
         TwoRevealed ( _, idA ) ( _, idB ) ->
-            { cards = game.cards |> setFace Down [ idA, idB ]
-            , turn = Waiting
+            { game
+                | cards = game.cards |> setFace Down [ idA, idB ]
+                , turn = Waiting
             }
                 |> runIf (card.id /= idA && card.id /= idB) (pick card)
 
@@ -140,8 +148,9 @@ hideMismatch : Game -> Game
 hideMismatch game =
     case game.turn of
         TwoRevealed ( _, idA ) ( _, idB ) ->
-            { cards = game.cards |> setFace Down [ idA, idB ]
-            , turn = Waiting
+            { game
+                | cards = game.cards |> setFace Down [ idA, idB ]
+                , turn = Waiting
             }
 
         _ ->
@@ -152,7 +161,7 @@ hideMismatch game =
 -}
 isWon : Game -> Bool
 isWon game =
-    Debug.todo "isWon"
+    List.all (\card -> card.face == Permanent) game.cards
 
 
 {-| Procura uma carta pelo identificador.

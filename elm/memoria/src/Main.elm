@@ -42,6 +42,16 @@ type alias Model =
     , themes : List Theme
     , theme : String
     , equalPairs : Bool
+    , records : List Record
+    , playerName : String
+    }
+
+
+{-| Um recorde do placar: quem jogou e quantas viradas precisou.
+-}
+type alias Record =
+    { name : String
+    , turns : Int
     }
 
 
@@ -62,6 +72,8 @@ init flags =
             , themes = []
             , theme = "animals"
             , equalPairs = False
+            , records = []
+            , playerName = ""
             }
     in
     ( model, Cmd.batch [ Api.getThemes GotThemes, fetchCards model ] )
@@ -84,6 +96,8 @@ type Msg
     | GotThemes (Result Http.Error (List Theme))
     | ThemeSelected String
     | EqualPairsToggled Bool
+    | NameChanged String
+    | RecordSaved
 
 
 {-| Tempo, em milissegundos, que as duas cartas erradas ficam à mostra.
@@ -147,6 +161,23 @@ update msg model =
         EqualPairsToggled equalPairs ->
             startNewGame { model | equalPairs = equalPairs }
 
+        NameChanged name ->
+            ( { model | playerName = name }, Cmd.none )
+
+        RecordSaved ->
+            case model.state of
+                Playing game ->
+                    let
+                        records =
+                            { name = model.playerName, turns = game.flips } :: model.records
+                    in
+                    ( { model | records = records, state = Loading }
+                    , fetchCards model
+                    )
+
+                _ ->
+                    ( model, Cmd.none )
+
 
 startNewGame : Model -> ( Model, Cmd Msg )
 startNewGame model =
@@ -191,13 +222,24 @@ view model =
                     ]
                     (game.cards |> List.map (viewCard game.turn))
         , viewNewGameButton
+        , case model.state of
+            Playing game ->
+                if Game.isWon game then
+                    viewVictory model.playerName game
+
+                else
+                    text ""
+
+            _ ->
+                text ""
         ]
 
 
 viewToolbar : Model -> Html Msg
 viewToolbar model =
     div [ class "toolbar" ]
-        [ label []
+        [ viewBestRecord model.records
+        , label []
             [ text "Tema "
             , select [ onInput ThemeSelected ]
                 (model.themes |> List.map (viewThemeOption model.theme))
@@ -211,7 +253,38 @@ viewToolbar model =
                 []
             , text " Pares iguais"
             ]
+        , viewFlips model.state
         ]
+
+
+{-| Mostra o melhor recorde (o de menos viradas), se houver algum.
+-}
+viewBestRecord : List Record -> Html Msg
+viewBestRecord records =
+    case bestRecord records of
+        Just record ->
+            span [ class "toolbar__record" ]
+                [ text ("Recorde: " ++ record.name ++ " · " ++ String.fromInt record.turns ++ " viradas") ]
+
+        Nothing ->
+            text ""
+
+
+bestRecord : List Record -> Maybe Record
+bestRecord records =
+    records
+        |> List.sortBy .turns
+        |> List.head
+
+
+viewFlips : State -> Html Msg
+viewFlips state =
+    case state of
+        Playing game ->
+            span [] [ text ("Viradas: " ++ String.fromInt game.flips) ]
+
+        _ ->
+            text ""
 
 
 viewThemeOption : String -> Theme -> Html Msg
@@ -302,8 +375,8 @@ isMissed turn card =
     False
 
 
-viewVictory : Game -> Html Msg
-viewVictory game =
+viewVictory : String -> Game -> Html Msg
+viewVictory playerName game =
     div
         [ class "overlay" ]
         [ node "dialog"
@@ -319,13 +392,21 @@ viewVictory game =
             , p
                 [ class "victory__text"
                 ]
-                [ text "8 jogadas" ]
+                [ text (String.fromInt game.flips ++ " viradas") ]
+            , input
+                [ class "victory__name"
+                , placeholder "Seu nome"
+                , value playerName
+                , onInput NameChanged
+                , autofocus True
+                ]
+                []
             , button
                 [ class "button button--primary"
                 , type_ "button"
-                , autofocus True
+                , onClick RecordSaved
                 ]
-                [ text "Jogar de novo" ]
+                [ text "Salvar e jogar de novo" ]
             ]
         ]
 

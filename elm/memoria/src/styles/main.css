@@ -612,6 +612,18 @@ button {
   text-transform: uppercase;
 }
 
+.victory__name {
+  display: block;
+  width: 100%;
+  margin: 0 0 16px;
+  padding: 8px 12px;
+  border: 2px solid var(--card-edge);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
 /* ---------- Telas em pé ---------- */
 
 @media (max-aspect-ratio: 4 / 5) {
@@ -680,4 +692,68 @@ button {
     animation-duration: 1ms !important;
     transition-duration: 1ms !important;
   }
+}
+
+/* ---------- Comemoração (src/comemoracao.js) ----------
+   Exagerada de propósito: é o exemplo de portas, não a estética da mesa. */
+
+.comemoracao__banner {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  font-family: var(--serif);
+  font-size: clamp(3rem, 12vw, 9rem);
+  font-weight: 900;
+}
+
+.comemoracao__letra {
+  display: inline-block;
+  color: #d4a017;
+  text-shadow:
+    0 0 12px #fff,
+    4px 4px 0 var(--wine),
+    8px 8px 0 rgba(0, 0, 0, 0.35);
+}
+
+.comemoracao__letra:nth-child(even) {
+  color: #e85d75;
+}
+
+.comemoracao__flash {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: #fff;
+  pointer-events: none;
+}
+
+.comemoracao__estrela {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 150;
+  width: 120px;
+  height: 120px;
+  margin: -60px 0 0 -60px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.comemoracao__estrela svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+/* Melhor recorde, em dourado, no começo da barra. */
+.toolbar__record {
+  color: var(--gold);
 }

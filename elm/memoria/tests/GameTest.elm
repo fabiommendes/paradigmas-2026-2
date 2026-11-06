@@ -6,17 +6,45 @@ import Rng
 import Test exposing (Test, describe, test)
 
 
-{-| Tabuleiro pequeno e previsível: a1, a2, b1, b2 e outro b1.
+{-| Monta um jogo sem embaralhar: a carta na posição `i` tem `id = i`.
+-}
+fromGroups : List Char -> Game.Game
+fromGroups groups =
+    { cards =
+        List.indexedMap
+            (\id group ->
+                { id = id
+                , group = group
+                , description = String.fromChar group
+                , url = ""
+                , face = Down
+                }
+            )
+            groups
+    , turn = Waiting
+    , flips = 0
+    }
+
+
+{-| Tabuleiro pequeno e previsível: a, a, b, b.
 -}
 smallGame : Game.Game
 smallGame =
-    Game.fromDeck
-        [ ( 'a', 1 )
-        , ( 'a', 2 )
-        , ( 'b', 1 )
-        , ( 'b', 2 )
-        , ( 'b', 1 )
-        ]
+    fromGroups [ 'a', 'a', 'b', 'b' ]
+
+
+{-| As 16 cartas que a API devolveria para um tema.
+-}
+infos : List { group : Char, description : String, url : String }
+infos =
+    String.toList "aabbccddeeffgghh"
+        |> List.indexedMap
+            (\i group ->
+                { group = group
+                , description = "carta " ++ String.fromInt i
+                , url = "/cards/" ++ String.fromInt i ++ ".webp"
+                }
+            )
 
 
 clickAll : List Int -> Game.Game -> Game.Game
@@ -33,94 +61,71 @@ suite : Test
 suite =
     describe "Game"
         [ describe "new"
-            [ test "distribui 16 cartas viradas para baixo" <|
+            [ test "distribui as cartas viradas para baixo" <|
                 \_ ->
-                    Game.new (Rng.seed 7)
+                    Game.new (Rng.seed 7) infos
                         |> Tuple.first
                         |> faces
-                        |> Expect.equal (List.repeat 16 FaceDown)
-            , test "cada grupo aparece uma vez com o membro 1 e uma vez com o 2" <|
+                        |> Expect.equal (List.repeat 16 Down)
+            , test "mantém todas as cartas recebidas" <|
                 \_ ->
-                    (Tuple.first (Game.new (Rng.seed 7))).cards
-                        |> List.map (\c -> String.fromChar c.group ++ String.fromInt c.member)
+                    (Tuple.first (Game.new (Rng.seed 7) infos)).cards
+                        |> List.map .description
                         |> List.sort
-                        |> Expect.equal
-                            [ "a1", "a2", "b1", "b2", "c1", "c2", "d1", "d2", "e1", "e2", "f1", "f2", "g1", "g2", "h1", "h2" ]
+                        |> Expect.equal (List.sort (List.map .description infos))
+            , test "cada carta ganha um id diferente" <|
+                \_ ->
+                    (Tuple.first (Game.new (Rng.seed 7) infos)).cards
+                        |> List.map .id
+                        |> List.sort
+                        |> Expect.equal (List.range 0 15)
             , test "a semente seguinte embaralha de outro jeito" <|
                 \_ ->
                     let
                         ( first, next ) =
-                            Game.new (Rng.seed 7)
+                            Game.new (Rng.seed 7) infos
 
                         ( second, _ ) =
-                            Game.new next
+                            Game.new next infos
                     in
                     Expect.notEqual first.cards second.cards
-            ]
-        , describe "isPair"
-            [ test "mesmo grupo e membros diferentes formam par" <|
-                \_ ->
-                    case smallGame.cards of
-                        a1 :: a2 :: _ ->
-                            Expect.equal True (Game.isPair a1 a2)
-
-                        _ ->
-                            Expect.fail "tabuleiro inesperado"
-            , test "grupos diferentes não formam par" <|
-                \_ ->
-                    case smallGame.cards of
-                        _ :: a2 :: b1 :: _ ->
-                            Expect.equal False (Game.isPair a2 b1)
-
-                        _ ->
-                            Expect.fail "tabuleiro inesperado"
-            , test "mesmo grupo e mesmo membro não formam par" <|
-                \_ ->
-                    case smallGame.cards of
-                        _ :: _ :: b1 :: _ :: otherB1 :: _ ->
-                            Expect.equal False (Game.isPair b1 otherB1)
-
-                        _ ->
-                            Expect.fail "tabuleiro inesperado"
             ]
         , describe "reveal"
             [ test "a primeira carta fica virada para cima" <|
                 \_ ->
                     clickAll [ 0 ] smallGame
                         |> Expect.all
-                            [ faces >> Expect.equal [ FaceUp, FaceDown, FaceDown, FaceDown, FaceDown ]
-                            , .turn >> Expect.equal (OnePicked 0)
-                            , .moves >> Expect.equal 0
+                            [ faces >> Expect.equal [ Up, Down, Down, Down ]
+                            , .turn >> Expect.equal (OneRevealed ( 'a', 0 ))
                             ]
-            , test "um casal fica marcado como encontrado" <|
+            , test "duas cartas do mesmo grupo formam par" <|
                 \_ ->
                     clickAll [ 0, 1 ] smallGame
                         |> Expect.all
-                            [ faces >> Expect.equal [ Matched, Matched, FaceDown, FaceDown, FaceDown ]
+                            [ faces >> Expect.equal [ Permanent, Permanent, Down, Down ]
                             , .turn >> Expect.equal Waiting
-                            , .moves >> Expect.equal 1
                             ]
             , test "um erro deixa as duas cartas à mostra" <|
                 \_ ->
                     clickAll [ 0, 2 ] smallGame
                         |> Expect.all
-                            [ faces >> Expect.equal [ FaceUp, FaceDown, FaceUp, FaceDown, FaceDown ]
-                            , .turn >> Expect.equal (Mismatch 0 2)
-                            , .moves >> Expect.equal 1
+                            [ faces >> Expect.equal [ Up, Down, Up, Down ]
+                            , .turn >> Expect.equal (TwoRevealed ( 'b', 2 ) ( 'a', 0 ))
                             ]
-            , test "duas cartas b1 não formam par" <|
+            , test "depois de um erro, outra carta desvira as duas e começa nova jogada" <|
                 \_ ->
-                    clickAll [ 2, 4 ] smallGame
-                        |> .turn
-                        |> Expect.equal (Mismatch 2 4)
-            , test "cliques durante um erro são ignorados" <|
+                    clickAll [ 0, 2, 3 ] smallGame
+                        |> Expect.all
+                            [ faces >> Expect.equal [ Down, Down, Down, Up ]
+                            , .turn >> Expect.equal (OneRevealed ( 'b', 3 ))
+                            ]
+            , test "depois de um erro, clicar numa das cartas só desvira as duas" <|
                 \_ ->
-                    let
-                        missed =
-                            clickAll [ 0, 2 ] smallGame
-                    in
-                    Game.reveal 3 missed
-                        |> Expect.equal missed
+                    clickAll [ 0, 2, 0 ] smallGame
+                        |> Expect.all
+                            [ faces >> Expect.equal [ Down, Down, Down, Down ]
+                            , .turn >> Expect.equal Waiting
+                            ]
             , test "clicar de novo na mesma carta não conta" <|
                 \_ ->
                     let
@@ -129,7 +134,7 @@ suite =
                     in
                     Game.reveal 0 picked
                         |> Expect.equal picked
-            , test "cartas já encontradas não viram de novo" <|
+            , test "cartas que já formaram par não viram de novo" <|
                 \_ ->
                     let
                         paired =
@@ -148,9 +153,8 @@ suite =
                     clickAll [ 0, 2 ] smallGame
                         |> Game.hideMismatch
                         |> Expect.all
-                            [ faces >> Expect.equal (List.repeat 5 FaceDown)
+                            [ faces >> Expect.equal (List.repeat 4 Down)
                             , .turn >> Expect.equal Waiting
-                            , .moves >> Expect.equal 1
                             ]
             , test "não faz nada fora de um erro" <|
                 \_ ->
@@ -161,17 +165,59 @@ suite =
                     Game.hideMismatch picked
                         |> Expect.equal picked
             ]
+        , describe "flips"
+            [ test "um jogo novo começa sem viradas" <|
+                \_ ->
+                    Game.new (Rng.seed 7) infos
+                        |> Tuple.first
+                        |> .flips
+                        |> Expect.equal 0
+            , test "cada carta que vira para cima conta uma virada" <|
+                \_ ->
+                    clickAll [ 0, 2, 3, 2 ] smallGame
+                        |> .flips
+                        |> Expect.equal 4
+            , test "formar um par conta as duas viradas" <|
+                \_ ->
+                    clickAll [ 0, 1 ] smallGame
+                        |> .flips
+                        |> Expect.equal 2
+            , test "clicar de novo na mesma carta não conta" <|
+                \_ ->
+                    clickAll [ 0, 0 ] smallGame
+                        |> .flips
+                        |> Expect.equal 1
+            , test "clicar numa carta que já formou par não conta" <|
+                \_ ->
+                    clickAll [ 0, 1, 0 ] smallGame
+                        |> .flips
+                        |> Expect.equal 2
+            , test "depois de um erro, clicar numa das cartas só desvira, não conta" <|
+                \_ ->
+                    clickAll [ 0, 2, 0 ] smallGame
+                        |> .flips
+                        |> Expect.equal 2
+            , test "hideMismatch não mexe no contador" <|
+                \_ ->
+                    clickAll [ 0, 2 ] smallGame
+                        |> Game.hideMismatch
+                        |> .flips
+                        |> Expect.equal 2
+            ]
         , describe "isWon"
             [ test "um jogo novo não está ganho" <|
                 \_ ->
                     Expect.equal False (Game.isWon smallGame)
-            , test "formar todos os casais ganha o jogo" <|
+            , test "com um par faltando, ainda não ganhou" <|
                 \_ ->
-                    Game.fromDeck [ ( 'a', 1 ), ( 'b', 2 ), ( 'a', 2 ), ( 'b', 1 ) ]
+                    clickAll [ 0, 1 ] smallGame
+                        |> Game.isWon
+                        |> Expect.equal False
+            , test "formar todos os pares ganha o jogo" <|
+                \_ ->
+                    fromGroups [ 'a', 'b', 'a', 'b' ]
                         |> clickAll [ 0, 2, 1, 3 ]
-                        |> Expect.all
-                            [ Game.isWon >> Expect.equal True
-                            , .moves >> Expect.equal 2
-                            ]
+                        |> Game.isWon
+                        |> Expect.equal True
             ]
         ]
