@@ -164,6 +164,11 @@ isWon game =
     List.all (\card -> card.face == Permanent) game.cards
 
 
+cheat : Game -> Game
+cheat game =
+    { game | cards = game.cards |> List.map (\card -> { card | face = Permanent }) }
+
+
 {-| Procura uma carta pelo identificador.
 -}
 findCard : CardId -> Game -> Maybe Card

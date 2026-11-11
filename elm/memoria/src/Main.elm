@@ -1,19 +1,33 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 {-| Ponto de entrada: liga as regras de `Game` à tela, seguindo a Arquitetura
 Elm (modelo, mensagens, `update` e `view`).
 -}
 
 import Api exposing (CardInfo, Theme)
+import Array
 import Browser
 import Game exposing (Card, Face(..), Game, Turn(..))
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onCheck, onClick, onInput)
 import Http
+import Json.Decode as D
 import Process
 import Rng exposing (Seed)
 import Task
+
+
+port celebrate : () -> Cmd msg
+
+
+port cheat : (String -> msg) -> Sub msg
+
+
+port getRuns : (D.Value -> msg) -> Sub msg
+
+
+port sendRun : Run -> Cmd msg
 
 
 {-| O JavaScript passa um número aleatório como semente (veja `src/main.js`).
@@ -28,7 +42,7 @@ main =
         { init = init
         , update = update
         , view = view
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = subscriptions
         }
 
 
@@ -42,17 +56,24 @@ type alias Model =
     , themes : List Theme
     , theme : String
     , equalPairs : Bool
-    , records : List Record
+    , records : List Run
     , playerName : String
     }
 
 
 {-| Um recorde do placar: quem jogou e quantas viradas precisou.
 -}
-type alias Record =
+type alias Run =
     { name : String
     , turns : Int
     }
+
+
+runDecoder : D.Decoder Run
+runDecoder =
+    D.map2 Run
+        (D.field "name" D.string)
+        (D.field "turns" D.int)
 
 
 {-| Em que ponto está a requisição das cartas.
@@ -61,6 +82,16 @@ type State
     = Loading
     | Failed Http.Error
     | Playing Game
+
+
+mapState : (Game -> Game) -> State -> State
+mapState fn state =
+    case state of
+        Playing game ->
+            Playing (fn game)
+
+        _ ->
+            state
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -97,7 +128,9 @@ type Msg
     | ThemeSelected String
     | EqualPairsToggled Bool
     | NameChanged String
-    | RecordSaved
+    | RunSaved
+    | CheatRequested String
+    | RunsReceived (List Run)
 
 
 {-| Tempo, em milissegundos, que as duas cartas erradas ficam à mostra.
@@ -126,8 +159,20 @@ update msg model =
                     let
                         newGame =
                             Game.reveal id game
+
+                        hasWonNow =
+                            Game.isWon newGame && not (Game.isWon game)
                     in
-                    ( { model | state = Playing newGame }, hideLater newGame.turn )
+                    ( { model | state = Playing newGame }
+                    , Cmd.batch
+                        [ hideLater newGame.turn
+                        , if hasWonNow then
+                            celebrate ()
+
+                          else
+                            Cmd.none
+                        ]
+                    )
 
                 _ ->
                     ( model, Cmd.none )
@@ -164,19 +209,39 @@ update msg model =
         NameChanged name ->
             ( { model | playerName = name }, Cmd.none )
 
-        RecordSaved ->
+        RunSaved ->
             case model.state of
                 Playing game ->
                     let
-                        records =
-                            { name = model.playerName, turns = game.flips } :: model.records
+                        run =
+                            { name = model.playerName, turns = game.flips }
+
+                        runs =
+                            run :: model.records
                     in
-                    ( { model | records = records, state = Loading }
-                    , fetchCards model
+                    ( { model | records = runs, state = Loading }
+                    , Cmd.batch
+                        [ sendRun run
+                        , fetchCards model
+                        ]
                     )
 
                 _ ->
                     ( model, Cmd.none )
+
+        CheatRequested jsMsg ->
+            let
+                -- "Gambiarra" semi-oficial para imprimir mensagens de debug
+                _ =
+                    Debug.log ("JS said: " ++ jsMsg) ()
+
+                cheatState =
+                    model.state |> mapState Game.cheat
+            in
+            ( { model | state = cheatState }, celebrate () )
+
+        RunsReceived runs ->
+            ( { model | records = runs }, Cmd.none )
 
 
 startNewGame : Model -> ( Model, Cmd Msg )
@@ -195,6 +260,28 @@ hideLater turn =
 
         _ ->
             Cmd.none
+
+
+
+-- INSCRICOES
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.batch
+        [ cheat CheatRequested
+        , getRuns
+            (\json ->
+                let
+                    runs =
+                        json
+                            |> D.decodeValue (D.list runDecoder)
+                            |> Result.mapError (\e -> Debug.log "erro" e)
+                            |> Result.withDefault [ { name = "<invalido>", turns = -1 } ]
+                in
+                RunsReceived runs
+            )
+        ]
 
 
 
@@ -259,7 +346,7 @@ viewToolbar model =
 
 {-| Mostra o melhor recorde (o de menos viradas), se houver algum.
 -}
-viewBestRecord : List Record -> Html Msg
+viewBestRecord : List Run -> Html Msg
 viewBestRecord records =
     case bestRecord records of
         Just record ->
@@ -270,7 +357,7 @@ viewBestRecord records =
             text ""
 
 
-bestRecord : List Record -> Maybe Record
+bestRecord : List Run -> Maybe Run
 bestRecord records =
     records
         |> List.sortBy .turns
@@ -404,7 +491,7 @@ viewVictory playerName game =
             , button
                 [ class "button button--primary"
                 , type_ "button"
-                , onClick RecordSaved
+                , onClick RunSaved
                 ]
                 [ text "Salvar e jogar de novo" ]
             ]
